@@ -193,86 +193,113 @@ def pasante_dashboard(request):
 
 @login_required
 def admin_gestion_usuarios(request):
-    # Verificación de permisos
     if not hasattr(request.user, 'userprofile') or not request.user.userprofile.es_admin():
         messages.error(request, 'No tienes permisos para acceder a esta página')
         return redirect('miapp:index')
     
-    usuarios = User.objects.all().select_related('userprofile').order_by('-date_joined')
-    
+    usuarios = User.objects.all().select_related('userprofile')
+
     if request.method == 'POST':
-        # --- CREAR USUARIO ---
+        print("POST DATA:", request.POST)
+
+        # ===========================
+        # CREAR USUARIO
+        # ===========================
         if 'crear_usuario' in request.POST:
             username = request.POST.get('username')
             password = request.POST.get('password')
             email = request.POST.get('email')
-            
-            # RECIBIMOS LOS NOMBRES DEL FORMULARIO HTML
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            
             tipo_usuario = request.POST.get('tipo_usuario')
-            
+
+            # Validar duplicado
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'El nombre de usuario ya existe')
-            else:
-                # GUARDAMOS LOS NOMBRES EN EL MODELO USER
+                return redirect('miapp:admin_gestion_usuarios')
+
+            try:
                 user = User.objects.create_user(
                     username=username,
                     password=password,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name
+                    email=email
                 )
-                
-                if not hasattr(user, 'userprofile'):
-                    UserProfile.objects.create(user=user)
-                
                 user.userprofile.tipo_usuario = tipo_usuario
                 user.userprofile.save()
-                
-                messages.success(request, f'Usuario "{username}" creado exitosamente')
-                
-        # --- EDITAR USUARIO ---
+
+                messages.success(request, f'Usuario {username} creado exitosamente')
+
+            except Exception as e:
+                messages.error(request, f"Error al crear usuario: {e}")
+
+            return redirect('miapp:admin_gestion_usuarios')
+
+        # ===========================
+        # EDITAR USUARIO
+        # ===========================
         elif 'editar_usuario' in request.POST:
             user_id = request.POST.get('user_id')
+            username = request.POST.get('username')
+            email = request.POST.get('email')
             tipo_usuario = request.POST.get('tipo_usuario')
             is_active = request.POST.get('is_active') == 'on'
-            
-            # RECIBIMOS LOS NOMBRES PARA EDITAR
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            
-            user = get_object_or_404(User, id=user_id)
-            
-            # ACTUALIZAMOS EL MODELO USER
-            user.username = request.POST.get('username') # Agregado para permitir cambio de username
-            user.email = request.POST.get('email')       # Agregado para permitir cambio de email
-            user.first_name = first_name
-            user.last_name = last_name
-            user.is_active = is_active
-            user.save()
-            
-            user.userprofile.tipo_usuario = tipo_usuario
-            user.userprofile.save()
-            
-            messages.success(request, f'Usuario actualizado correctamente')
 
-        # --- ELIMINAR USUARIO ---
+            user = get_object_or_404(User, id=user_id)
+
+            # ==== Validar nombre duplicado ====
+            if User.objects.filter(username=username).exclude(id=user.id).exists():
+                messages.error(request, f'El nombre de usuario "{username}" ya está en uso.')
+                return redirect('miapp:admin_gestion_usuarios')
+
+            # ==== Validar email duplicado (opcional) ====
+            if email and User.objects.filter(email=email).exclude(id=user.id).exists():
+                messages.error(request, f'El correo "{email}" ya está en uso.')
+                return redirect('miapp:admin_gestion_usuarios')
+
+            try:
+                # Actualizar User
+                user.username = username
+                user.email = email
+                user.is_active = is_active
+                user.save()
+
+                # Actualizar Profile
+                user.userprofile.tipo_usuario = tipo_usuario
+                user.userprofile.save()
+
+                messages.success(request, f'Usuario {user.username} actualizado correctamente')
+
+            except Exception as e:
+                messages.error(request, f"Error al actualizar usuario: {e}")
+
+            return redirect('miapp:admin_gestion_usuarios')
+
+        # ===========================
+        # ELIMINAR USUARIO
+        # ===========================
         elif "eliminar_usuario" in request.POST:
             user_id = request.POST.get("eliminar_user_id")
+
             try:
                 usuario = get_object_or_404(User, pk=user_id)
                 usuario.delete()
                 messages.success(request, "Usuario eliminado correctamente")
+
             except Exception as e:
-                messages.error(request, f"Error al eliminar: {e}")
+                messages.error(request, f"Error al eliminar usuario: {e}")
+
+            return redirect('miapp:admin_gestion_usuarios')
+
+  
+    return render(request, 'miapp/admin/gestion_usuarios.html', {
+        'usuarios': usuarios
+    })
     
-    return render(request, 'miapp/admin/gestion_usuarios.html', {'usuarios': usuarios})
-
-
 @login_required
 def admin_gestion_recursos(request):
+    """
+    Gestión de recursos para ADMIN:
+    - Soporta campos: titulo, descripcion, tipo_recurso, categoria, url, archivo, portada, contenido, es_publico
+    - Validación: debe existir url o archivo al crear
+    """
     if not hasattr(request.user, 'userprofile') or not request.user.userprofile.es_admin():
         messages.error(request, 'No tienes permisos para acceder a esta página')
         return redirect('miapp:index')
@@ -281,81 +308,117 @@ def admin_gestion_recursos(request):
     categorias = CategoriaRecurso.objects.all()
     
     if request.method == 'POST':
-        
-        # =======================
-        # CREAR RECURSO
-        # =======================
+        # Crear recurso
         if 'crear_recurso' in request.POST:
-            titulo = request.POST.get('titulo')
-            descripcion = request.POST.get('descripcion')
+            titulo = request.POST.get('titulo', '').strip()
+            descripcion = request.POST.get('descripcion', '').strip()
             tipo_recurso = request.POST.get('tipo_recurso')
             categoria_id = request.POST.get('categoria')
-            contenido = request.POST.get('contenido')
+            contenido = request.POST.get('contenido', '').strip()
             es_publico = request.POST.get('es_publico') == 'on'
-
-           
-            enlace = request.POST.get('enlace')
-            imagen_portada = request.FILES.get('imagen_portada')
-
-            recurso = Recurso.objects.create(
-                titulo=titulo,
-                descripcion=descripcion,
-                tipo_recurso=tipo_recurso,
-                categoria_id=categoria_id,
-                contenido=contenido,
-                es_publico=es_publico,
-                creado_por=request.user,
-                enlace=enlace,  
-                imagen_portada=imagen_portada  
-            )
-            messages.success(request, f'Recurso "{titulo}" creado exitosamente')
-
+            url = request.POST.get('url', '').strip()
+            archivo = request.FILES.get('archivo')
+            portada = request.FILES.get('portada')
+            
+            # Validaciones básicas
+            if not titulo or not descripcion or not categoria_id:
+                messages.error(request, 'Por favor completa todos los campos obligatorios (Título, Descripción, Categoría).')
+                return redirect('miapp:admin_gestion_recursos')
+            
+            # Requerir al menos url o archivo
+            if not url and not archivo:
+                messages.error(request, 'Debes proporcionar un ENLACE (URL) o subir un ARCHIVO.')
+                return redirect('miapp:admin_gestion_recursos')
+            
+            try:
+                recurso = Recurso.objects.create(
+                    titulo=titulo,
+                    descripcion=descripcion,
+                    tipo_recurso=tipo_recurso,
+                    categoria_id=categoria_id,
+                    contenido=contenido,
+                    es_publico=es_publico,
+                    url=url if url else None,
+                    archivo=archivo if archivo else None,
+                    portada=portada if portada else None,
+                    creado_por=request.user
+                )
+                messages.success(request, f'Recurso "{titulo}" creado exitosamente')
+            except Exception as e:
+                messages.error(request, f'Error al crear recurso: {e}')
+            
+            return redirect('miapp:admin_gestion_recursos')
         
-        # =======================
-        # EDITAR RECURSO
-        # =======================
+        # Editar recurso
         elif 'editar_recurso' in request.POST:
             recurso_id = request.POST.get('recurso_id')
             recurso = get_object_or_404(Recurso, id=recurso_id)
-
-            recurso.titulo = request.POST.get('titulo')
-            recurso.descripcion = request.POST.get('descripcion')
-            recurso.tipo_recurso = request.POST.get('tipo_recurso')
-            recurso.categoria_id = request.POST.get('categoria')
-            recurso.contenido = request.POST.get('contenido')
-            recurso.es_publico = request.POST.get('es_publico') == 'on'
-
-   
-            recurso.enlace = request.POST.get('enlace')
-
-            if 'imagen_portada' in request.FILES:
-                recurso.imagen_portada = request.FILES['imagen_portada']
-
-            recurso.save()
-            messages.success(request, f'Recurso "{recurso.titulo}" actualizado')
-
+            
+            titulo = request.POST.get('titulo', '').strip()
+            descripcion = request.POST.get('descripcion', '').strip()
+            tipo_recurso = request.POST.get('tipo_recurso')
+            categoria_id = request.POST.get('categoria')
+            contenido = request.POST.get('contenido', '').strip()
+            es_publico = request.POST.get('es_publico') == 'on'
+            url = request.POST.get('url', '').strip()
+            archivo = request.FILES.get('archivo')
+            portada = request.FILES.get('portada')
+            
+            # Validaciones básicas
+            if not titulo or not descripcion or not categoria_id:
+                messages.error(request, 'Por favor completa todos los campos obligatorios (Título, Descripción, Categoría).')
+                return redirect('miapp:admin_gestion_recursos')
+            
+            # Si no existe url ni archivo nuevo ni archivo previo -> rechazar
+            if not url and not archivo and not recurso.archivo:
+                messages.error(request, 'El recurso debe tener un ENLACE (URL) o un ARCHIVO. Si quieres eliminar el archivo existente primero sube otro o añade una URL.')
+                return redirect('miapp:admin_gestion_recursos')
+            
+            try:
+                recurso.titulo = titulo
+                recurso.descripcion = descripcion
+                recurso.tipo_recurso = tipo_recurso
+                recurso.categoria_id = categoria_id
+                recurso.contenido = contenido
+                recurso.es_publico = es_publico
+                recurso.url = url if url else None
+                
+                # Reemplazar archivo si se sube uno nuevo
+                if archivo:
+                    recurso.archivo = archivo
+                # Reemplazar portada si se sube una nueva
+                if portada:
+                    recurso.portada = portada
+                
+                recurso.save()
+                messages.success(request, f'Recurso "{titulo}" actualizado')
+            except Exception as e:
+                messages.error(request, f'Error al actualizar recurso: {e}')
+            
+            return redirect('miapp:admin_gestion_recursos')
         
-        # =======================
-        # ELIMINAR RECURSO
-        # =======================
+        # Eliminar recurso
         elif 'eliminar_recurso' in request.POST:
             recurso_id = request.POST.get('recurso_id')
             recurso = get_object_or_404(Recurso, id=recurso_id)
             titulo = recurso.titulo
-            recurso.delete()
-            messages.success(request, f'Recurso "{titulo}" eliminado')
+            try:
+                recurso.delete()
+                messages.success(request, f'Recurso "{titulo}" eliminado')
+            except Exception as e:
+                messages.error(request, f'Error al eliminar recurso: {e}')
+            
+            return redirect('miapp:admin_gestion_recursos')
     
-
     return render(request, 'miapp/admin/gestion_recursos.html', {
         'recursos': recursos_list,
         'categorias': categorias
     })
 
-
 @login_required
 def admin_consultas(request):
     if not hasattr(request.user, 'userprofile') or not request.user.userprofile.es_admin():
-        messages.error(request, 'No tienes permisos para acceder a esta página')
+        messages.error(request, 'No tienes permisos para acceder al dashboard de administrador')
         return redirect('miapp:index')
     
     consultas = FormularioContacto.objects.all().select_related('usuario')
@@ -381,6 +444,10 @@ def admin_consultas(request):
 
 @login_required
 def pasante_gestion_recursos(request):
+    """
+    Gestión de recursos para PASANTE:
+    Igual que admin, pero solo permite editar/eliminar recursos creados por el pasante.
+    """
     if not hasattr(request.user, 'userprofile') or not request.user.userprofile.es_pasante():
         messages.error(request, 'No tienes permisos para acceder a esta página')
         return redirect('miapp:index')
@@ -389,55 +456,126 @@ def pasante_gestion_recursos(request):
     categorias = CategoriaRecurso.objects.all()
     
     if request.method == 'POST':
+
+        # ---------------------------------------------------------
+        # CREAR RECURSO
+        # ---------------------------------------------------------
         if 'crear_recurso' in request.POST:
-            titulo = request.POST.get('titulo')
-            descripcion = request.POST.get('descripcion')
+
+            titulo = request.POST.get('titulo', '').strip()
+            descripcion = request.POST.get('descripcion', '').strip()
             tipo_recurso = request.POST.get('tipo_recurso')
             categoria_id = request.POST.get('categoria')
-            contenido = request.POST.get('contenido')
+            contenido = request.POST.get('contenido', '').strip()
             es_publico = request.POST.get('es_publico') == 'on'
+
+            # COINCIDE CON TU HTML
+            url = request.POST.get('enlace', '').strip()
+
+            # COINCIDE CON TU HTML
+            portada = request.FILES.get('imagen_portada')
+
+            # Validaciones básicas
+            if not titulo or not descripcion or not categoria_id:
+                messages.error(request, 'Por favor completa todos los campos obligatorios (Título, Descripción, Categoría).')
+                return redirect('miapp:pasante_gestion_recursos')
             
-            recurso = Recurso.objects.create(
-                titulo=titulo,
-                descripcion=descripcion,
-                tipo_recurso=tipo_recurso,
-                categoria_id=categoria_id,
-                contenido=contenido,
-                es_publico=es_publico,
-                creado_por=request.user
-            )
-            messages.success(request, f'Recurso "{titulo}" creado exitosamente')
+            if not url:
+                messages.error(request, 'Debes proporcionar un ENLACE (URL).')
+                return redirect('miapp:pasante_gestion_recursos')
             
+            try:
+                Recurso.objects.create(
+                    titulo=titulo,
+                    descripcion=descripcion,
+                    tipo_recurso=tipo_recurso,
+                    categoria_id=categoria_id,
+                    contenido=contenido,
+                    es_publico=es_publico,
+                    url=url if url else None,
+                    portada=portada if portada else None,
+                    creado_por=request.user
+                )
+                messages.success(request, f'Recurso "{titulo}" creado exitosamente')
+            except Exception as e:
+                messages.error(request, f'Error al crear recurso: {e}')
+            
+            return redirect('miapp:pasante_gestion_recursos')
+        
+
+        # ---------------------------------------------------------
+        # EDITAR RECURSO  (CORREGIDO PARA COINCIDIR CON TU HTML)
+        # ---------------------------------------------------------
         elif 'editar_recurso' in request.POST:
+
             recurso_id = request.POST.get('recurso_id')
-            titulo = request.POST.get('titulo')
-            descripcion = request.POST.get('descripcion')
+            recurso = get_object_or_404(Recurso, id=recurso_id, creado_por=request.user)
+            
+            titulo = request.POST.get('titulo', '').strip()
+            descripcion = request.POST.get('descripcion', '').strip()
             tipo_recurso = request.POST.get('tipo_recurso')
             categoria_id = request.POST.get('categoria')
-            contenido = request.POST.get('contenido')
+            contenido = request.POST.get('contenido', '').strip()
             es_publico = request.POST.get('es_publico') == 'on'
+
+            # HTML usa "enlace", no "url"
+            url = request.POST.get('enlace', '').strip()
+
+            # HTML usa "imagen_portada", no "portada"
+            nueva_portada = request.FILES.get('imagen_portada')
+
+            if not titulo or not descripcion or not categoria_id:
+                messages.error(request, 'Por favor completa todos los campos obligatorios (Título, Descripción, Categoría).')
+                return redirect('miapp:pasante_gestion_recursos')
             
-            recurso = get_object_or_404(Recurso, id=recurso_id, creado_por=request.user)
-            recurso.titulo = titulo
-            recurso.descripcion = descripcion
-            recurso.tipo_recurso = tipo_recurso
-            recurso.categoria_id = categoria_id
-            recurso.contenido = contenido
-            recurso.es_publico = es_publico
-            recurso.save()
-            messages.success(request, f'Recurso "{titulo}" actualizado')
+            if not url and not recurso.url:
+                messages.error(request, 'El recurso debe tener un ENLACE (URL).')
+                return redirect('miapp:pasante_gestion_recursos')
             
+            try:
+                recurso.titulo = titulo
+                recurso.descripcion = descripcion
+                recurso.tipo_recurso = tipo_recurso
+                recurso.categoria_id = categoria_id
+                recurso.contenido = contenido
+                recurso.es_publico = es_publico
+                recurso.url = url if url else None
+
+                # Reemplazar portada si se sube una nueva
+                if nueva_portada:
+                    recurso.portada = nueva_portada
+                
+                recurso.save()
+                messages.success(request, f'Recurso "{titulo}" actualizado correctamente')
+            
+            except Exception as e:
+                messages.error(request, f'Error al actualizar recurso: {e}')
+            
+            return redirect('miapp:pasante_gestion_recursos')
+        
+
+        # ---------------------------------------------------------
+        # ELIMINAR RECURSO
+        # ---------------------------------------------------------
         elif 'eliminar_recurso' in request.POST:
             recurso_id = request.POST.get('recurso_id')
             recurso = get_object_or_404(Recurso, id=recurso_id, creado_por=request.user)
             titulo = recurso.titulo
-            recurso.delete()
-            messages.success(request, f'Recurso "{titulo}" eliminado')
+
+            try:
+                recurso.delete()
+                messages.success(request, f'Recurso "{titulo}" eliminado')
+            except Exception as e:
+                messages.error(request, f'Error al eliminar recurso: {e}')
+            
+            return redirect('miapp:pasante_gestion_recursos')
     
+
     return render(request, 'miapp/pasante/gestion_recursos.html', {
         'recursos': recursos_list,
         'categorias': categorias
     })
+
 
 @login_required
 def pasante_consultas(request):
@@ -654,9 +792,6 @@ def preguntas_frecuentes(request):
     """Vista para la página de preguntas frecuentes"""
     return render(request, 'miapp/preguntas_frecuentes.html')
 
-
-
-
 #============================================================================
 #============================================================================
 # ==================== VISTAS PARA EL TEST PERSONALIZADO ====================
@@ -747,7 +882,6 @@ def resultado_test(request, resultado_id):
         'seccion_actual': 'test'
     })
 
-
 @login_required
 def ver_resultados_pasante(request):
     """Vista para que los pasantes vean los resultados DETALLADOS de los pacientes"""
@@ -782,7 +916,6 @@ def ver_resultados_pasante(request):
         'resultados_detallados': resultados_detallados,
         'seccion_actual': 'resultados'
     })
-
 
 @login_required
 def subir_contenido_personalizado(request, paciente_id):
@@ -835,7 +968,6 @@ def calcular_resumen_por_seccion(respuestas):
         seccion = respuesta.pregunta.seccion
         resumen[seccion] += respuesta.opcion_elegida.puntaje
     return resumen
-
 
 # ==================== VISTAS PARA "VER COMO USUARIO" ====================
 

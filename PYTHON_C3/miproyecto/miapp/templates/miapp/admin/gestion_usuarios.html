@@ -12,6 +12,7 @@
         </div>
     </div>
 
+    <!-- Formulario para crear usuario -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow">
@@ -21,19 +22,46 @@
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
+
                         <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre *</label>
+                                    <input type="text" name="first_name" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Apellido *</label>
+                                    <input type="text" name="last_name" class="form-control" required>
+                                </div>
+                            </div>
+
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Usuario *</label>
                                     <input type="text" name="username" class="form-control" required>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row">
+
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Contraseña *</label>
                                     <input type="password" name="password" class="form-control" required>
                                 </div>
                             </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control">
+                                </div>
+                            </div>
+
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Tipo de Usuario *</label>
@@ -44,30 +72,7 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Nombre</label>
-                                    <input type="text" name="first_name" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Apellido</label>
-                                    <input type="text" name="last_name" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control">
-                                </div>
-                            </div>
                         </div>
 
                         <button type="submit" name="crear_usuario" class="btn btn-success">
@@ -79,6 +84,7 @@
         </div>
     </div>
 
+    <!-- Lista de usuarios -->
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Usuarios ({{ usuarios.count }})</h5>
@@ -89,7 +95,7 @@
                     <thead>
                         <tr>
                             <th>Usuario</th>
-                            <th>Nombre Completo</th> <th>Email</th>
+                            <th>Email</th>
                             <th>Tipo</th>
                             <th>Fecha Registro</th>
                             <th>Estado</th>
@@ -99,8 +105,13 @@
                     <tbody>
                         {% for usuario in usuarios %}
                         <tr>
-                            <td><strong>{{ usuario.username }}</strong></td>
-                            <td>{{ usuario.first_name }} {{ usuario.last_name }}</td> <td>{{ usuario.email|default:"No especificado" }}</td>
+                            <td>
+                                <strong>{{ usuario.username }}</strong>
+                                <br>
+                                <small>{{ usuario.first_name }} {{ usuario.last_name }}</small>
+                            </td>
+
+                            <td>{{ usuario.email|default:"No especificado" }}</td>
 
                             <td>
                                 <span class="badge bg-{% if usuario.userprofile.tipo_usuario == 'admin' %}danger{% elif usuario.userprofile.tipo_usuario == 'pasante' %}warning{% else %}success{% endif %}">
@@ -117,52 +128,33 @@
                             </td>
 
                             <td>
+                                <!-- Botón Editar -->
                                 <button type="button" class="btn btn-sm btn-outline-primary"
                                         data-bs-toggle="modal" data-bs-target="#modalUsuario{{ usuario.id }}">
-                                    <i class="fas fa-edit"></i> Editar
+                                    <i class="fas fa-edit"></i>
                                 </button>
 
+                                <!-- Botón Eliminar -->
                                 <button type="button" class="btn btn-sm btn-outline-danger"
                                         data-bs-toggle="modal" data-bs-target="#modalEliminar{{ usuario.id }}">
-                                    <i class="fas fa-trash"></i> Eliminar
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
 
+
+                        <!-- Modal Editar Usuario -->
                         <div class="modal fade" id="modalUsuario{{ usuario.id }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-
                                     <div class="modal-header">
                                         <h5 class="modal-title">Editar Usuario: {{ usuario.username }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-
                                     <form method="post">
                                         {% csrf_token %}
-                                        <input type="hidden" name="editar_usuario" value="1">
                                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
-
                                         <div class="modal-body">
-
-                                            <div class="mb-3">
-                                                <label class="form-label">Nombre de usuario</label>
-                                                <input type="text" name="username" value="{{ usuario.username }}" class="form-control" required>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label class="form-label">Nombre</label>
-                                                <input type="text" name="first_name" value="{{ usuario.first_name }}" class="form-control">
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label class="form-label">Apellido</label>
-                                                <input type="text" name="last_name" value="{{ usuario.last_name }}" class="form-control">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Email</label>
-                                                <input type="email" name="email" value="{{ usuario.email }}" class="form-control">
-                                            </div>
 
                                             <div class="mb-3">
                                                 <label class="form-label">Tipo de Usuario</label>
@@ -173,9 +165,8 @@
                                                 </select>
                                             </div>
 
-                                            <div class="form-check mb-3">
-                                                <input type="checkbox" name="is_active" class="form-check-input"
-                                                       {% if usuario.is_active %}checked{% endif %}>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" name="is_active" class="form-check-input" {% if usuario.is_active %}checked{% endif %}>
                                                 <label class="form-check-label">Usuario activo</label>
                                             </div>
 
@@ -183,14 +174,15 @@
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                            <button type="submit" name="editar_usuario" class="btn btn-primary">Guardar Cambios</button>
                                         </div>
                                     </form>
-
                                 </div>
                             </div>
                         </div>
 
+
+<!-- Modal Eliminar -->
                         <div class="modal fade" id="modalEliminar{{ usuario.id }}" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
