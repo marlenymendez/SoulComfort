@@ -1,0 +1,276 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Realizar Test Psicológico - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Mejorado -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    Test de Bienestar Emocional
+                </h1>
+                <p class="lead text-muted">Tu honestidad nos ayudará a proporcionarte el mejor apoyo personalizado</p>
+                <div class="welcome-badge bg-primary text-white">
+                    Paso 1 de 1 - Completa todas las preguntas
+                </div>
+            </div>
+
+            <!-- Instrucciones -->
+            <div class="card feature-card mb-5">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Instrucciones del Test
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p class="mb-3">Por favor, responde cada pregunta con sinceridad y reflexiona sobre tu experiencia actual. Este test está diseñado para entender mejor tu estado emocional y proporcionarte recomendaciones específicas para tu bienestar.</p>
+                            <div class="alert alert-warning mb-0">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <strong>Importante:</strong> Todas las preguntas son obligatorias para obtener resultados precisos.
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="time-estimate bg-light rounded p-3">
+                                <i class="fas fa-clock text-primary fa-2x mb-2"></i>
+                                <div><strong>Tiempo estimado</strong></div>
+                                <div>10-15 minutos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario del Test -->
+            <form method="post" class="test-form" id="testForm">
+                {% csrf_token %}
+                
+                {% for pregunta in preguntas %}
+                <div class="card feature-card mb-4 question-card" id="pregunta-{{ pregunta.id }}">
+                    <div class="card-header bg-light py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 text-primary">
+                                <span class="badge bg-primary me-2">Sección {{ pregunta.seccion }}</span>
+                                Pregunta {{ pregunta.numero }}
+                            </h5>
+                            <span class="progress-indicator text-muted">
+                                {{ forloop.counter }}/{{ preguntas|length }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <h6 class="card-title fw-bold mb-4">{{ pregunta.texto }}</h6>
+                        <div class="form-group">
+                            {% for opcion in pregunta.opcionrespuestapersonalizado_set.all %}
+                            <div class="form-option mb-3 position-relative">
+                                <input class="form-check-input" type="radio" 
+                                       name="pregunta_{{ pregunta.id }}" 
+                                       id="opcion_{{ opcion.id }}_{{ pregunta.id }}" 
+                                       value="{{ opcion.id }}" required>
+                                <label class="form-check-label option-label w-100 h-100 position-absolute top-0 start-0" for="opcion_{{ opcion.id }}_{{ pregunta.id }}">
+                                    <span class="option-text">{{ opcion.texto }}</span>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="required-indicator text-danger mt-3" style="display: none;">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+                            Esta pregunta es obligatoria
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Botón de Envío -->
+                <div class="text-center mt-5">
+                    <div class="submit-section bg-light rounded p-4 mb-4">
+                        <h5 class="mb-3">¿Estás listo para enviar tus respuestas?</h5>
+                        <p class="text-muted mb-4">Revisa que hayas respondido todas las preguntas antes de continuar.</p>
+                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3" id="submitBtn">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Enviar Test
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .feature-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(108, 99, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .question-card:hover {
+        box-shadow: 0 8px 25px rgba(108, 99, 255, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .form-option {
+        padding: 15px 15px;
+        border: 2px solid #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        min-height: 60px;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .form-option:hover {
+        border-color: #6C63FF;
+        background: rgba(108, 99, 255, 0.05);
+    }
+    
+    .form-check-input:checked + .option-label + .form-option {
+        border-color: #6C63FF;
+        background: rgba(108, 99, 255, 0.08);
+    }
+    
+    .form-check-input:checked + .option-label .option-text {
+        color: #6C63FF;
+        font-weight: 600;
+    }
+    
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-top: 0.2em;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .form-check-input:checked {
+        background-color: #6C63FF;
+        border-color: #6C63FF;
+    }
+    
+    .option-label {
+        padding: 15px 15px 15px 45px;
+        cursor: pointer;
+        margin: 0;
+        z-index: 1;
+    }
+    
+    .progress-indicator {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .time-estimate {
+        border-left: 4px solid #6C63FF;
+    }
+    
+    .welcome-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .submit-section {
+        border: 2px dashed #dee2e6;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6C63FF 0%, #8A82FF 100%);
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+    }
+    
+    .required-indicator {
+        font-size: 0.9rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .form-option {
+            padding: 12px 12px;
+            min-height: 55px;
+        }
+        
+        .option-label {
+            padding: 12px 12px 12px 40px;
+        }
+        
+        .btn-lg {
+            padding: 12px 30px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación de formulario antes de enviar
+    const form = document.getElementById('testForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', function(e) {
+        let allAnswered = true;
+        
+        // Verificar cada pregunta
+        {% for pregunta in preguntas %}
+        const pregunta{{ pregunta.id }} = document.querySelector('input[name="pregunta_{{ pregunta.id }}"]:checked');
+        const indicator{{ pregunta.id }} = document.querySelector('#pregunta-{{ pregunta.id }} .required-indicator');
+        
+        if (!pregunta{{ pregunta.id }}) {
+            allAnswered = false;
+            if (indicator{{ pregunta.id }}) {
+                indicator{{ pregunta.id }}.style.display = 'block';
+                document.getElementById('pregunta-{{ pregunta.id }}').style.border = '2px solid #dc3545';
+            }
+        } else {
+            if (indicator{{ pregunta.id }}) {
+                indicator{{ pregunta.id }}.style.display = 'none';
+                document.getElementById('pregunta-{{ pregunta.id }}').style.border = '';
+            }
+        }
+        {% endfor %}
+        
+        if (!allAnswered) {
+            e.preventDefault();
+            alert('Por favor, responde todas las preguntas antes de enviar el test.');
+            window.scrollTo(0, 0);
+        }
+    });
+    
+    // Ocultar indicadores cuando se selecciona una opción
+    const radioInputs = document.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const questionId = this.name.replace('pregunta_', '');
+            const indicator = document.querySelector(`#pregunta-${questionId} .required-indicator`);
+            const questionCard = document.getElementById(`pregunta-${questionId}`);
+            
+            if (indicator) {
+                indicator.style.display = 'none';
+            }
+            if (questionCard) {
+                questionCard.style.border = '';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

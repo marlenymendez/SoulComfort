@@ -1,0 +1,116 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Recursos - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Mejorado -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    Recursos de Bienestar
+                </h1>
+                <p class="lead text-muted">Explora nuestras herramientas y recursos para tu crecimiento emocional</p>
+                <div class="welcome-badge bg-primary text-white">
+                    Kit de Herramientas Digitales
+                </div>
+            </div>
+
+            <!-- Mensaje para pasantes en modo usuario -->
+            {% if user.userprofile.tipo_usuario == 'pasante' and request.session.viewing_as_user %}
+            <div class="alert alert-info mb-5">
+                <i class="fas fa-eye me-2"></i>
+                <strong>Estás en modo de previsualización:</strong> Viendo el sitio como lo vería un usuario normal.
+                <a href="{% url 'miapp:volver_a_pasante' %}" class="btn btn-sm btn-outline-info ms-3">
+                    Volver a Pasante
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Contenido de recursos -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-book-open fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title text-primary mb-3">Guías Prácticas</h5>
+                            <p class="card-text mb-4">
+                                Accede a guías paso a paso y ejercicios prácticos para 
+                                mejorar tu bienestar emocional día a día.
+                            </p>
+                            <a href="#" class="btn btn-outline-primary">Explorar Guías</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-play-circle fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title text-success mb-3">Contenido Multimedia</h5>
+                            <p class="card-text mb-4">
+                                Descubre videos, audios y material interactivo diseñado 
+                                para tu desarrollo personal y emocional.
+                            </p>
+                            <a href="{% url 'miapp:recursos_multimedia' %}" class="btn btn-outline-success">Ver Multimedia</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="cta-section text-white rounded-3 p-5">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3 class="fw-bold mb-3">¿Buscas algo específico?</h3>
+                                <p class="mb-0">
+                                    Nuestro equipo de pasantes está disponible para crear contenido 
+                                    personalizado según tus necesidades particulares.
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <a href="{% url 'miapp:tests' %}" class="btn btn-light btn-lg">
+                                    Realizar Test
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .feature-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(108, 99, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(108, 99, 255, 0.2);
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, #6C63FF 0%, #8A82FF 100%);
+    }
+    
+    .welcome-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

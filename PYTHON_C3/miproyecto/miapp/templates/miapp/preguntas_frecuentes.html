@@ -1,0 +1,259 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Preguntas Frecuentes - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">Preguntas Frecuentes</h1>
+            <p class="lead">Encuentra respuestas a las preguntas más comunes sobre SoulComfort</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Acordeón de preguntas frecuentes -->
+            <div class="accordion" id="faqAccordion">
+                <!-- Categoría: Sobre SoulComfort -->
+                <div class="card feature-card mb-3">
+                    <div class="card-header bg-transparent border-0">
+                        <h2 class="h4 mb-0">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Sobre SoulComfort
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Pregunta 1 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Qué es SoulComfort y cómo puede ayudarme?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>SoulComfort es una plataforma digital diseñada como un refugio emocional seguro donde puedes encontrar recursos, herramientas y apoyo para tu bienestar mental.</p>
+                            <p>Nuestro objetivo es proporcionar:</p>
+                            <ul>
+                                <li>Recursos multimedia educativos sobre salud mental</li>
+                                <li>Herramientas prácticas para el manejo emocional</li>
+                                <li>Un espacio comunitario de apoyo mutuo</li>
+                                <li>Información sobre recursos de ayuda profesional</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingTwo">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Es SoulComfort un servicio de terapia en línea?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>No, SoulComfort no es un servicio de terapia en línea ni sustituye la atención profesional de salud mental. Somos una plataforma de apoyo y recursos que complementa el cuidado de la salud mental.</p>
+                            <p>Si necesitas atención psicológica o psiquiátrica profesional, te recomendamos buscar ayuda con especialistas certificados. En nuestra sección de <strong>Recursos de Emergencia</strong> encontrarás información de contacto para servicios de ayuda profesional.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoría: Cuenta y Acceso -->
+                <div class="card feature-card mb-3 mt-5">
+                    <div class="card-header bg-transparent border-0">
+                        <h2 class="h4 mb-0">
+                            <i class="fas fa-user-circle text-primary me-2"></i>
+                            Cuenta y Acceso
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingThree">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Cómo obtengo acceso a SoulComfort?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>El acceso a SoulComfort es mediante credenciales proporcionadas. No hay registro público disponible.</p>
+                            <p>Si necesitas acceso, contacta al administrador del sistema para obtener tus credenciales de inicio de sesión.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 4 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingFour">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Qué tipos de cuentas existen y qué privilegios tienen?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>SoulComfort cuenta con tres tipos de usuarios:</p>
+                            <ul>
+                                <li><strong>Usuario Regular:</strong> Acceso completo a recursos, herramientas descargables y foro comunitario</li>
+                                <li><strong>Pasante:</strong> Usuarios en formación que pueden acceder a dashboards especializados para su desarrollo profesional</li>
+                                <li><strong>Administrador:</strong> Personal encargado de la gestión de la plataforma y sus contenidos</li>
+                            </ul>
+                            <p>Tu tipo de cuenta es asignado por el equipo administrativo según tus necesidades.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoría: Recursos y Herramientas -->
+                <div class="card feature-card mb-3 mt-5">
+                    <div class="card-header bg-transparent border-0">
+                        <h2 class="h4 mb-0">
+                            <i class="fas fa-toolbox text-primary me-2"></i>
+                            Recursos y Herramientas
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Pregunta 5 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingFive">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Qué recursos multimedia ofrece SoulComfort?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>En nuestra sección de Recursos Multimedia encontrarás:</p>
+                            <ul>
+                                <li>Videos educativos sobre manejo de emociones</li>
+                                <li>Meditaciones guiadas para diferentes necesidades</li>
+                                <li>Podcasts sobre bienestar mental</li>
+                                <li>Ejercicios de respiración y relajación</li>
+                                <li>Contenido sobre técnicas de mindfulness</li>
+                            </ul>
+                            <p>Todos nuestros recursos están cuidadosamente seleccionados y organizados por categorías para que encuentres fácilmente lo que necesitas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 6 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingSix">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Qué incluye el Kit de Herramientas?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>Nuestro Kit de Herramientas contiene documentos descargables diseñados para brindarte apoyo práctico:</p>
+                            <ul>
+                                <li>Ejercicios de relajación y mindfulness</li>
+                                <li>Libros y guías sobre salud mental</li>
+                                <li>Materiales educativos sobre diferentes condiciones de salud mental</li>
+                            </ul>
+                            <p>Todos estos documentos están disponibles para descarga una vez que inicias sesión en tu cuenta.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoría: Privacidad y Seguridad -->
+                <div class="card feature-card mb-3 mt-5">
+                    <div class="card-header bg-transparent border-0">
+                        <h2 class="h4 mb-0">
+                            <i class="fas fa-shield-alt text-primary me-2"></i>
+                            Privacidad y Seguridad
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Pregunta 7 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingSeven">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Cómo protege SoulComfort mi privacidad y datos personales?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>En SoulComfort tomamos muy en serio tu privacidad y seguridad:</p>
+                            <ul>
+                                <li>Toda la información se transmite mediante conexiones seguras (HTTPS)</li>
+                                <li>No compartimos tu información personal con terceros sin tu consentimiento</li>
+                                <li>Puedes utilizar seudónimos en el foro comunitario para mantener tu anonimato</li>
+                                <li>Cumplimos con las normativas de protección de datos aplicables</li>
+                                <li>Tienes control sobre qué información compartes en tu perfil</li>
+                            </ul>
+                            <p>Puedes consultar nuestra Política de Privacidad completa para más detalles sobre cómo manejamos y protegemos tus datos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 8 -->
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-header bg-white" id="headingEight">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-start text-decoration-none fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                <i class="fas fa-question-circle text-primary me-2"></i>
+                                ¿Es confidencial mi participación en el foro comunitario?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseEight" class="collapse" aria-labelledby="headingEight" data-bs-parent="#faqAccordion">
+                        <div class="card-body">
+                            <p>El foro comunitario está diseñado para ser un espacio seguro donde puedes compartir experiencias:</p>
+                            <ul>
+                                <li>Puedes participar con tu nombre de usuario o de forma anónima</li>
+                                <li>Moderamos activamente el contenido para mantener un ambiente respetuoso</li>
+                                <li>No se permite compartir información personal identificable</li>
+                                <li>Puedes editar o eliminar tus publicaciones en cualquier momento</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Script para mejorar la experiencia del acordeón
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mantener abierta solo una pregunta a la vez
+        const accordionItems = document.querySelectorAll('#faqAccordion .collapse');
+        accordionItems.forEach(item => {
+            item.addEventListener('show.bs.collapse', function() {
+                // Cerrar otros elementos abiertos
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('show')) {
+                        const bsCollapse = new bootstrap.Collapse(otherItem);
+                        bsCollapse.hide();
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Tests Psicológicos - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Mejorado -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    Tests Psicológicos
+                </h1>
+                <p class="lead text-muted">Evalúa tu bienestar emocional y recibe recomendaciones personalizadas basadas en tus respuestas</p>
+                <div class="welcome-badge bg-primary text-white">
+                    Tu camino hacia el bienestar emocional comienza aquí
+                </div>
+            </div>
+
+            <!-- Test Principal -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card feature-card h-100">
+                        <div class="card-body p-5 text-center">
+                            <div class="mb-4">
+                                <i class="fas fa-brain text-primary fa-3x"></i>
+                            </div>
+                            <h3 class="card-title fw-bold mb-3">Test de Bienestar Emocional</h3>
+                            <p class="card-text lead mb-4">
+                                Una evaluación completa diseñada para entender tu estado emocional actual 
+                                y proporcionarte herramientas específicas para tu crecimiento personal.
+                            </p>
+                            
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <span>20 preguntas especializadas</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <span>Resultados inmediatos</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <span>Diagnóstico personalizado</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="feature-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <span>Contenido específico para ti</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="time-estimate bg-light rounded p-3 mb-4">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                <strong>Tiempo estimado:</strong> 10-15 minutos
+                            </div>
+
+                            <a href="{% url 'miapp:realizar_test' %}" class="btn btn-primary btn-lg px-5 py-3">
+                                Comenzar Test
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Pasantes -->
+            {% if user.userprofile.es_pasante or user.userprofile.es_admin %}
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-8">
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white text-center py-3">
+                            <h4 class="mb-0">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                Panel de Pasantes
+                            </h4>
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <p class="card-text mb-4">
+                                Como pasante, tienes acceso a los resultados detallados de los tests 
+                                y la capacidad de crear contenido personalizado para cada paciente 
+                                según sus necesidades específicas.
+                            </p>
+                            <a href="{% url 'miapp:ver_resultados_pasante' %}" class="btn btn-outline-primary btn-lg">
+                                Ver Resultados de Tests
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Información Adicional -->
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-10">
+                    <div class="cta-section text-white py-5 px-3">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 text-center">
+                                <h3 class="fw-bold mb-3">Confidencialidad Garantizada</h3>
+                                <p class="mb-4">
+                                    Tus respuestas son completamente confidenciales y se utilizan únicamente 
+                                    para proporcionarte el mejor apoyo posible. Nuestro equipo de pasantes 
+                                    está comprometido con tu bienestar emocional.
+                                </p>
+                                <div class="trust-badges">
+                                    <span class="badge bg-light text-dark me-2">Privacidad</span>
+                                    <span class="badge bg-light text-dark me-2">Confidencialidad</span>
+                                    <span class="badge bg-light text-dark">Apoyo Profesional</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .feature-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(108, 99, 255, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .feature-item {
+        text-align: left;
+        padding: 8px 0;
+        font-size: 1.1rem;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, #6C63FF 0%, #8A82FF 100%);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .time-estimate {
+        border-left: 4px solid #6C63FF;
+    }
+    
+    .welcome-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .trust-badges {
+        margin-top: 20px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6C63FF 0%, #8A82FF 100%);
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+    }
+</style>
+{% endblock %}

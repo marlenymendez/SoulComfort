@@ -1,0 +1,255 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Resultado del Test - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header Mejorado -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    Resultado de tu Evaluación
+                </h1>
+                <p class="lead text-muted">Hemos analizado tus respuestas para proporcionarte un diagnóstico personalizado</p>
+                <div class="welcome-badge bg-primary text-white">
+                    Evaluación completada exitosamente
+                </div>
+            </div>
+
+            <!-- Tarjeta Principal de Resultados -->
+            <div class="card feature-card mb-5">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Resumen de tu Evaluación
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <!-- Puntaje y Barra de Progreso -->
+                    <div class="row align-items-center mb-5">
+                        <div class="col-md-6">
+                            <div class="score-display text-center">
+                                <h4 class="text-primary mb-2">Puntaje Total</h4>
+                                <div class="score-number display-4 fw-bold text-primary">
+                                    {{ resultado.puntaje_total }}/80
+                                </div>
+                                <p class="text-muted">Basado en tus 20 respuestas</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="progress-container">
+                                <h5 class="mb-3">Nivel de Bienestar</h5>
+                                <div class="progress mb-3" style="height: 30px;">
+                                    {% widthratio resultado.puntaje_total 80 100 as porcentaje %}
+                                    <div class="progress-bar 
+                                        {% if resultado.puntaje_total <= 20 %}bg-success
+                                        {% elif resultado.puntaje_total <= 40 %}bg-warning
+                                        {% elif resultado.puntaje_total <= 60 %}bg-warning
+                                        {% else %}bg-danger{% endif %}" 
+                                        style="width: {{ porcentaje }}%">
+                                        <span class="progress-text">{{ resultado.puntaje_total }}/80</span>
+                                    </div>
+                                </div>
+                                <div class="progress-labels d-flex justify-content-between">
+                                    <small>Óptimo</small>
+                                    <small>Moderado</small>
+                                    <small>Por Mejorar</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Diagnóstico -->
+                    <div class="diagnostic-section mb-5">
+                        <div class="alert 
+                            {% if resultado.puntaje_total <= 20 %}alert-success
+                            {% elif resultado.puntaje_total <= 40 %}alert-warning
+                            {% elif resultado.puntaje_total <= 60 %}alert-warning
+                            {% else %}alert-danger{% endif %} 
+                            border-0 rounded-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-stethoscope fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="alert-heading mb-2">Diagnóstico Personalizado</h5>
+                                    <p class="mb-0 fs-6">{{ resultado.diagnostico }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Próximos Pasos -->
+                    <div class="next-steps-section">
+                        <div class="cta-section text-white rounded-3 p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h4 class="fw-bold mb-2">Siguiente Fase: Contenido Personalizado</h4>
+                                    <p class="mb-0">
+                                        Nuestro equipo de pasantes especializados revisará detalladamente tus resultados 
+                                        y creará contenido específicamente diseñado para tus necesidades emocionales.
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <i class="fas fa-user-graduate fa-3x mb-3"></i>
+                                    <div class="timeline-badge">
+                                        <small>En los próximos días</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="additional-info mt-4">
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <div class="info-item p-3">
+                                    <i class="fas fa-calendar-check text-primary fa-2x mb-2"></i>
+                                    <h6>Fecha de Evaluación</h6>
+                                    <p class="mb-0 text-muted">{{ resultado.fecha_test|date:"d/m/Y H:i" }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item p-3">
+                                    <i class="fas fa-shield-alt text-primary fa-2x mb-2"></i>
+                                    <h6>Confidencialidad</h6>
+                                    <p class="mb-0 text-muted">Tus datos están protegidos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="text-center mt-4">
+                <div class="action-buttons">
+                    <a href="{% url 'miapp:index' %}" class="btn btn-primary btn-lg px-5 py-3 me-3">
+                        <i class="fas fa-home me-2"></i>
+                        Volver al Inicio
+                    </a>
+                    <a href="{% url 'miapp:tests' %}" class="btn btn-outline-primary btn-lg px-5 py-3">
+                        <i class="fas fa-redo me-2"></i>
+                        Realizar Otro Test
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .feature-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(108, 99, 255, 0.1);
+    }
+    
+    .score-number {
+        font-size: 3.5rem;
+        line-height: 1;
+    }
+    
+    .progress {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .progress-bar {
+        border-radius: 15px;
+        position: relative;
+        font-weight: 600;
+    }
+    
+    .progress-text {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-weight: 600;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .progress-labels {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, #6C63FF 0%, #8A82FF 100%);
+    }
+    
+    .welcome-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .info-item {
+        border: 2px solid #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .info-item:hover {
+        border-color: #6C63FF;
+        background: rgba(108, 99, 255, 0.05);
+    }
+    
+    .timeline-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6C63FF 0%, #8A82FF 100%);
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+    }
+    
+    .btn-outline-primary {
+        border: 2px solid #6C63FF;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #6C63FF;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .score-number {
+            font-size: 2.5rem;
+        }
+        
+        .card-body {
+            padding: 2rem 1.5rem;
+        }
+        
+        .action-buttons .btn {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        
+        .action-buttons .me-3 {
+            margin-right: 0 !important;
+        }
+    }
+</style>
+{% endblock %}

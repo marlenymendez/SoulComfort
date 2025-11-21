@@ -1,0 +1,172 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Dashboard Administrador - SoulComfort{% endblock %}
+
+{% block content %}
+
+<style>
+    /* ===== ESTILOS SIMILARES AL DASHBOARD PASANTE ===== */
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        padding: 12px 20px;
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .section-blue { background: #1E63F0; }
+    .section-green { background: #0A8D47; }
+
+    /* Tarjetas estadísticas */
+    .stat-card {
+        border-radius: 22px;
+        padding: 25px;
+        background: white;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .stat-card i {
+        font-size: 45px;
+        margin-bottom: 10px;
+    }
+
+    .stat-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .stat-desc {
+        font-size: .9rem;
+        color: #555;
+    }
+
+    /* Botones de acciones rápidas */
+    .action-btn {
+        width: 100%;
+        padding: 18px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        border-radius: 14px;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        transition: .12s ease-in-out;
+        text-decoration: none !important;
+    }
+
+    .action-btn i {
+        font-size: 1.4rem;
+    }
+
+    .action-btn:hover {
+        transform: scale(1.03);
+        opacity: .9;
+        text-decoration: none !important;
+    }
+
+    /* QUITAR SUBRAYADO DEL TEXTO DENTRO DEL BOTÓN */
+    .action-btn *,
+    .action-btn:hover *,
+    .action-btn:focus *,
+    .action-btn:active * {
+        text-decoration: none !important;
+    }
+
+    .btn-green { background: linear-gradient(90deg,#0BA859,#0CBC70); }
+    .btn-orange { background: linear-gradient(90deg,#FFB400,#FF8C00); }
+    .btn-blue { background: linear-gradient(90deg,#0C77FF,#3E9BFF); }
+
+</style>
+
+<div class="container">
+
+    <!-- TÍTULO -->
+    <h1 class="text-center mt-3" style="font-size:2.6rem; font-weight:700; color:#0367FF;">
+        Dashboard Administrador
+    </h1>
+    <p class="text-center mb-4" style="font-size:1.1rem; color:#555;">
+        Gestión del sistema, consultas y recursos generales de SoulComfort
+    </p>
+
+    <!-- ESTADÍSTICAS -->
+    <div class="row mb-5 text-center">
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <i class="fas fa-users" style="color:#1E63F0;"></i>
+                <div class="stat-title">Total Usuarios</div>
+                <div class="stat-number">{{ stats.total_usuarios }}</div>
+                <div class="stat-desc">Usuarios registrados</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <i class="fas fa-book" style="color:#0A8D47;"></i>
+                <div class="stat-title">Total Recursos</div>
+                <div class="stat-number">{{ stats.total_recursos }}</div>
+                <div class="stat-desc">Recursos creados</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <i class="fas fa-envelope" style="color:#FF8C00;"></i>
+                <div class="stat-title">Total Consultas</div>
+                <div class="stat-number">{{ stats.total_consultas }}</div>
+                <div class="stat-desc">Consultas recibidas</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <i class="fas fa-clock" style="color:#D62828;"></i>
+                <div class="stat-title">Pendientes</div>
+                <div class="stat-number">{{ stats.consultas_sin_responder }}</div>
+                <div class="stat-desc">Por responder</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE ACCIONES -->
+    <div class="section-title section-blue">
+        <i class="fas fa-rocket me-2"></i> Acciones Rápidas
+    </div>
+
+    <div class="row mb-5">
+
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'miapp:admin_gestion_usuarios' %}" class="action-btn btn-blue">
+                <i class="fas fa-users"></i> Gestionar Usuarios
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'miapp:admin_gestion_recursos' %}" class="action-btn btn-green">
+                <i class="fas fa-book"></i> Gestionar Recursos
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'miapp:admin_consultas' %}" class="action-btn btn-orange">
+                <i class="fas fa-envelope"></i> Ver Consultas
+            </a>
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

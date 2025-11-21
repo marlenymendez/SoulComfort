@@ -1,0 +1,58 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Subir Contenido Personalizado - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📎 Subir Contenido para {{ paciente.username }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título del Contenido</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="tipo_contenido" class="form-label">Tipo de Contenido</label>
+                            <select class="form-select" id="tipo_contenido" name="tipo_contenido" required>
+                                <option value="">Seleccionar tipo...</option>
+                                <option value="video">Video</option>
+                                <option value="infografia">Infografía</option>
+                                <option value="articulo">Artículo</option>
+                                <option value="ejercicio">Ejercicio</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="archivo" class="form-label">Archivo (opcional)</label>
+                            <input type="file" class="form-control" id="archivo" name="archivo">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="url" class="form-label">URL (opcional)</label>
+                            <input type="url" class="form-control" id="url" name="url" placeholder="https://...">
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success">📤 Subir Contenido</button>
+                            <a href="{% url 'miapp:ver_resultados_pasante' %}" class="btn btn-outline-secondary">← Volver</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

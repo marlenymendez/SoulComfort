@@ -1,0 +1,290 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Dashboard Pasante - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Mejorado -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    Dashboard Pasante
+                </h1>
+                <p class="lead text-muted">Gestiona recursos, consultas y contenido personalizado para los pacientes</p>
+                <div class="welcome-badge bg-primary text-white">
+                    Panel de Control - SoulComfort
+                </div>
+            </div>
+
+            <!-- Estadísticas Mejoradas -->
+            <div class="row mb-5">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-book fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title text-success mb-2">Total Recursos</h5>
+                            <div class="display-6 fw-bold text-gray-800 mb-2">{{ stats.total_recursos }}</div>
+                            <p class="text-muted small">Recursos creados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-envelope fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="card-title text-warning mb-2">Total Consultas</h5>
+                            <div class="display-6 fw-bold text-gray-800 mb-2">{{ stats.total_consultas }}</div>
+                            <p class="text-muted small">Consultas recibidas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-clock fa-3x text-danger"></i>
+                            </div>
+                            <h5 class="card-title text-danger mb-2">Consultas Pendientes</h5>
+                            <div class="display-6 fw-bold text-gray-800 mb-2">{{ stats.consultas_sin_responder }}</div>
+                            <p class="text-muted small">Por responder</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-chart-bar fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title text-primary mb-2">Tests Completados</h5>
+                            <div class="display-6 fw-bold text-gray-800 mb-2">{{ stats.total_tests|default:"8" }}</div>
+                            <p class="text-muted small">Evaluaciones</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas - Sección 1 -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card feature-card">
+                        <div class="card-header bg-primary text-white py-3">
+                            <h4 class="mb-0">
+                                <i class="fas fa-tasks me-2"></i>
+                                Gestión de Contenido
+                            </h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <a href="{% url 'miapp:pasante_gestion_recursos' %}" class="btn btn-success w-100 py-3">
+                                        <i class="fas fa-book me-2"></i>
+                                        Gestionar Recursos
+                                    </a>
+                                    <p class="text-muted small mt-2 mb-0">Crear y editar recursos públicos para todos los usuarios</p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <a href="{% url 'miapp:pasante_consultas' %}" class="btn btn-warning w-100 py-3">
+                                        <i class="fas fa-envelope me-2"></i>
+                                        Ver Consultas
+                                    </a>
+                                    <p class="text-muted small mt-2 mb-0">Responder consultas y dudas de los pacientes</p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <a href="{% url 'miapp:recursos' %}" class="btn btn-info w-100 py-3">
+                                        <i class="fas fa-eye me-2"></i>
+                                        Ver como Usuario
+                                    </a>
+                                    <p class="text-muted small mt-2 mb-0">Previsualizar la experiencia del paciente</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Tests y Contenido Personalizado - NUEVA SECCIÓN -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card feature-card">
+                        <div class="card-header bg-success text-white py-3">
+                            <h4 class="mb-0">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                Gestión de Tests y Contenido Personalizado
+                            </h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card border-primary h-100">
+                                        <div class="card-body text-center p-4">
+                                            <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                                            <h5 class="card-title text-primary mb-3">Resultados de Tests</h5>
+                                            <p class="card-text mb-4">
+                                                Revisa los resultados detallados de los tests psicológicos completados por los pacientes. 
+                                                Analiza sus respuestas específicas para entender sus necesidades emocionales.
+                                            </p>
+                                            <a href="{% url 'miapp:ver_resultados_pasante' %}" class="btn btn-primary btn-lg w-100">
+                                                <i class="fas fa-search me-2"></i>
+                                                Ver Resultados Detallados
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="card border-success h-100">
+                                        <div class="card-body text-center p-4">
+                                            <i class="fas fa-file-medical-alt fa-3x text-success mb-3"></i>
+                                            <h5 class="card-title text-success mb-3">Contenido Personalizado</h5>
+                                            <p class="card-text mb-4">
+                                                Crea contenido específico para cada paciente basado en sus resultados. 
+                                                Videos, artículos y ejercicios adaptados a sus necesidades particulares.
+                                            </p>
+                                            <div class="alert alert-info small">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Disponible desde la página de resultados
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de Tests Recientes -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card feature-card">
+                        <div class="card-header bg-info text-white py-3">
+                            <h4 class="mb-0">
+                                <i class="fas fa-bell me-2"></i>
+                                Actividad Reciente
+                            </h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3">
+                                    <div class="activity-item p-3">
+                                        <i class="fas fa-user-check fa-2x text-primary mb-2"></i>
+                                        <h6>Pacientes Activos</h6>
+                                        <p class="mb-0 text-muted">1 paciente completó tests</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="activity-item p-3">
+                                        <i class="fas fa-clipboard-check fa-2x text-success mb-2"></i>
+                                        <h6>Tests Completados</h6>
+                                        <p class="mb-0 text-muted">8 evaluaciones realizadas</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="activity-item p-3">
+                                        <i class="fas fa-chart-pie fa-2x text-warning mb-2"></i>
+                                        <h6>Contenido Pendiente</h6>
+                                        <p class="mb-0 text-muted">Personaliza según resultados</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .feature-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(108, 99, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(108, 99, 255, 0.15);
+    }
+    
+    .display-6 {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    
+    .welcome-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .activity-item {
+        border: 2px solid #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        border-color: #6C63FF;
+        background: rgba(108, 99, 255, 0.05);
+    }
+    
+    .btn {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6C63FF 0%, #8A82FF 100%);
+        border: none;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        border: none;
+        color: white;
+    }
+    
+    .btn-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        border: none;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .display-6 {
+            font-size: 2rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}

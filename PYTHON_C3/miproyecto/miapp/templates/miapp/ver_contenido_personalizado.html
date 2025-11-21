@@ -1,0 +1,53 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Mi Contenido Personalizado - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">📚 Mi Contenido Personalizado</h2>
+    
+    {% if contenido %}
+    <div class="row">
+        {% for item in contenido %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        {% if item.tipo_contenido == 'video' %}🎥
+                        {% elif item.tipo_contenido == 'infografia' %}📊
+                        {% elif item.tipo_contenido == 'articulo' %}📄
+                        {% else %}💪{% endif %}
+                        {{ item.titulo }}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ item.descripcion }}</p>
+                    <p class="text-muted small">
+                        <strong>Subido por:</strong> {{ item.pasante.username }}<br>
+                        <strong>Fecha:</strong> {{ item.fecha_creacion|date:"d/m/Y" }}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    {% if item.archivo %}
+                    <a href="{{ item.archivo.url }}" class="btn btn-sm btn-primary" target="_blank">
+                        📥 Descargar
+                    </a>
+                    {% endif %}
+                    {% if item.url %}
+                    <a href="{{ item.url }}" class="btn btn-sm btn-success" target="_blank">
+                        🌐 Ver Online
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">Aún no tienes contenido personalizado. Realiza el test para que los pasantes puedan subir contenido específico para ti.</p>
+        <a href="{% url 'miapp:realizar_test' %}" class="btn btn-primary mt-2">📊 Realizar Test</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'miapp/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar de Perfil -->
+        <div class="col-lg-4 mb-4">
+            <div class="card feature-card">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    </div>
+                    <h4 class="fw-bold">{{ user.username }}</h4>
+                    <p class="text-muted mb-3">
+                        {% if user.userprofile.tipo_usuario == 'admin' %}
+                        <span class="badge bg-primary">Administrador</span>
+                        {% elif user.userprofile.tipo_usuario == 'pasante' %}
+                        <span class="badge bg-success">Pasante</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Usuario</span>
+                        {% endif %}
+                    </p>
+                    <p class="small text-muted">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Miembro desde: {{ user.date_joined|date:"d M Y" }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="card feature-card mt-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Mis Estadísticas</h6>
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="text-primary fw-bold fs-4">{{ stats.total_consultas }}</div>
+                            <small class="text-muted">Consultas</small>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="text-success fw-bold fs-4">{{ stats.hilos_creados }}</div>
+                            <small class="text-muted">Hilos</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-info fw-bold fs-4">{{ stats.respuestas_creadas }}</div>
+                            <small class="text-muted">Respuestas</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-warning fw-bold fs-4">{{ stats.consultas_respondidas }}</div>
+                            <small class="text-muted">Respondidas</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="col-lg-8">
+            <!-- Información del Usuario -->
+            <div class="card feature-card mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-user me-2 text-primary"></i>Información Personal
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Nombre Completo:</label>
+                            <p class="form-control-plaintext">{{ nombre_completo }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Nombre de Usuario:</label>
+                            <p class="form-control-plaintext">{{ user.username }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Email:</label>
+                            <p class="form-control-plaintext">{{ user.email|default:"No especificado" }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Tipo de Usuario:</label>
+                            <p class="form-control-plaintext">
+                                {% if user.userprofile.tipo_usuario == 'admin' %}
+                                <span class="badge bg-primary">Administrador</span>
+                                {% elif user.userprofile.tipo_usuario == 'pasante' %}
+                                <span class="badge bg-success">Pasante</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Usuario Regular</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Fecha de Registro:</label>
+                            <p class="form-control-plaintext">{{ user.date_joined|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consultas Recientes -->
+            <div class="card feature-card mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-envelope me-2 text-primary"></i>Mis Consultas Recientes
+                    </h5>
+                    {% if consultas_recientes %}
+                    <div class="list-group">
+                        {% for consulta in consultas_recientes %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ consulta.asunto }}</h6>
+                                <small class="text-muted">{{ consulta.creado_en|date:"d M Y" }}</small>
+                            </div>
+                            <p class="mb-1 small">{{ consulta.mensaje|truncatewords:20 }}</p>
+                            <small class="text-{% if consulta.respondido %}success{% else %}warning{% endif %}">
+                                <i class="fas fa-{% if consulta.respondido %}check-circle{% else %}clock{% endif %} me-1"></i>
+                                {% if consulta.respondido %}Respondida{% else %}Pendiente{% endif %}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">
+                        <i class="fas fa-inbox fa-2x mb-3"></i><br>
+                        No has realizado consultas aún.
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Hilos Recientes en el Foro -->
+            <div class="card feature-card">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-comments me-2 text-primary"></i>Mis Hilos Recientes
+                    </h5>
+                    {% if hilos_recientes %}
+                    <div class="list-group">
+                        {% for hilo in hilos_recientes %}
+                        <a href="{% url 'miapp:detalle_hilo' hilo.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ hilo.titulo }}</h6>
+                                <small class="text-muted">{{ hilo.creado_en|date:"d M Y" }}</small>
+                            </div>
+                            <p class="mb-1 small">{{ hilo.contenido|truncatewords:15 }}</p>
+                            <small class="text-muted">
+                                <i class="fas fa-eye me-1"></i>{{ hilo.visitas }} vistas •
+                                <i class="fas fa-comment me-1"></i>{{ hilo.respuestas.count }} respuestas
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">
+                        <i class="fas fa-comments fa-2x mb-3"></i><br>
+                        No has creado hilos en el foro aún.
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

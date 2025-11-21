@@ -1,0 +1,133 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Resultados de Tests - SoulComfort{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Mejorado -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    Resultados de Tests
+                </h1>
+                <p class="lead text-muted">Revisa los resultados detallados de los pacientes y crea contenido personalizado</p>
+                <div class="welcome-badge bg-primary text-white">
+                    Panel de Pasantes - Gestión de Contenido
+                </div>
+            </div>
+
+            {% if resultados_detallados %}
+            {% for item in resultados_detallados %}
+            <div class="card feature-card mb-5">
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user me-2"></i>
+                            Paciente: {{ item.resultado.paciente.username }}
+                        </h4>
+                        <span class="badge bg-light text-dark fs-6">
+                            Puntaje: {{ item.resultado.puntaje_total }}/80
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Diagnóstico General -->
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-stethoscope me-2"></i>
+                                Diagnóstico General
+                            </h5>
+                            <p class="mb-3">{{ item.resultado.diagnostico }}</p>
+                            <p class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                Fecha del test: {{ item.resultado.fecha_test|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <a href="{% url 'miapp:subir_contenido_personalizado' item.resultado.paciente.id %}" 
+                               class="btn btn-success btn-lg w-100 py-3">
+                                <i class="fas fa-upload me-2"></i>
+                                Subir Contenido
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Respuestas Detalladas -->
+                    <h5 class="text-primary mb-4">
+                        <i class="fas fa-list-alt me-2"></i>
+                        Respuestas Detalladas
+                    </h5>
+                    <div class="row">
+                        {% for respuesta in item.respuestas %}
+                        <div class="col-lg-6 mb-3">
+                            <div class="card {% if respuesta.opcion_elegida.puntaje >= 2 %}border-warning{% else %}border-light{% endif %} h-100">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">
+                                        <strong class="text-primary">{{ respuesta.pregunta.numero }}.</strong> 
+                                        {{ respuesta.pregunta.texto|truncatewords:10 }}
+                                    </h6>
+                                    <p class="card-text mb-2">
+                                        <strong>Respuesta:</strong> {{ respuesta.opcion_elegida.texto }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            Sección: {{ respuesta.pregunta.seccion }}
+                                        </small>
+                                        <span class="badge {% if respuesta.opcion_elegida.puntaje >= 2 %}bg-warning{% else %}bg-secondary{% endif %}">
+                                            Puntaje: {{ respuesta.opcion_elegida.puntaje }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="text-center py-5">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h4>No hay resultados disponibles</h4>
+                    <p class="mb-0">Aún no hay tests completados por los pacientes.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .feature-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(108, 99, 255, 0.1);
+    }
+    
+    .welcome-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+</style>
+{% endblock %}
